@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tcs.dao.Employee;
 import com.tcs.dao.EmployeeManagementRepository;
+import com.tcs.exception.EmployeeManagementException;
+import com.tcs.service.EmployeeManagementService;
 
 @Controller
 @RequestMapping("/")
@@ -36,25 +38,16 @@ public class EmployeeManagementController {
 	@CrossOrigin(origins = "http://localhost:4200")
 	@RequestMapping(value = "/{employeeId}", method = RequestMethod.GET)
 	public ResponseEntity<String> employeeDetails(@PathVariable("employeeId") Integer employeeId, Model model) {
-
-		List<Employee> employeeDetails = employeeManagementRepository.findByEmployeeId(employeeId);
-		Employee employee;
-		String jsonStr = "No employee found";
-		if (employeeDetails != null && !employeeDetails.isEmpty()) {
-			employee = employeeDetails.get(0);
-			ObjectMapper Obj = new ObjectMapper();
-			try {
-				jsonStr = Obj.writeValueAsString(employee);
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				jsonStr = "Error in parsing";
-				e.printStackTrace();
-			}
-
-		} else {
-			return new ResponseEntity<>(jsonStr, HttpStatus.NOT_FOUND);
+		ResponseEntity<String> response = null;
+		try {
+			response = employeeManagementService.getEmployeeData(employeeId);
+		} catch (EmployeeManagementException employeeManagementException) {
+			new ResponseEntity<>(employeeManagementException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception exception) {
+			new ResponseEntity<>("Unknown error occured", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<>(jsonStr, HttpStatus.OK);
+
+		return response;
 	}
 
 	@CrossOrigin(origins = "http://localhost:4200")

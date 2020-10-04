@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableDiscoveryClient
 @RefreshScope
-@ComponentScan(basePackages = { "com.tcs.controller", "com.tcs.server" })
+@ComponentScan(basePackages = { "com.tcs.controller", "com.tcs.server","com.tcs.service"})
 @EntityScan("com.tcs.dao")
 @EnableJpaRepositories("com.tcs.dao")
 public class EmployeeManagementServerWIthExceptionHandlingApplication {
